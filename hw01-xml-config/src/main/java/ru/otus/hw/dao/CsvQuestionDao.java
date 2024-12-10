@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,24 +20,23 @@ public class CsvQuestionDao implements QuestionDao {
 
     @Override
     public List<Question> findAll() {
-        List<Question> questions = new ArrayList<>();
+        List<Question> questions;
 
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream(fileNameProvider.getTestFileName())) {
             if (Objects.isNull(stream)) {
                 throw new QuestionReadException("File %s not found".formatted(fileNameProvider.getTestFileName()));
             }
-            var reader = new BufferedReader(new InputStreamReader(stream));
-            var csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
-                    .withSkipLines(1)
-                    .withType(QuestionDto.class)
-                    .withSeparator(';')
-                    .build();
+            try (var reader = new BufferedReader(new InputStreamReader(stream))) {
+                var csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
+                        .withSkipLines(1)
+                        .withType(QuestionDto.class)
+                        .withSeparator(';')
+                        .build();
 
-            questions = csvToBean.stream()
-                    .map(QuestionDto::toDomainObject)
-                    .toList();
-
-            reader.close();
+                questions = csvToBean.stream()
+                        .map(QuestionDto::toDomainObject)
+                        .toList();
+            }
         } catch (IOException e) {
             throw new QuestionReadException("Can't read file %s".formatted(fileNameProvider.getTestFileName()), e);
         }
