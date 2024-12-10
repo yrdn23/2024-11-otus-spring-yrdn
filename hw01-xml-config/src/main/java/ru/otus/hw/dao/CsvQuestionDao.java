@@ -26,18 +26,19 @@ public class CsvQuestionDao implements QuestionDao {
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream(fileNameProvider.getTestFileName())) {
             if (Objects.isNull(stream)) {
                 throw new QuestionReadException("File %s not found".formatted(fileNameProvider.getTestFileName()));
-            } else {
-                var reader = new BufferedReader(new InputStreamReader(stream));
-                var csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
-                        .withSkipLines(1)
-                        .withType(QuestionDto.class)
-                        .withSeparator(';')
-                        .build();
-
-                for (QuestionDto question : csvToBean) {
-                    questions.add(question.toDomainObject());
-                }
             }
+            var reader = new BufferedReader(new InputStreamReader(stream));
+            var csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
+                    .withSkipLines(1)
+                    .withType(QuestionDto.class)
+                    .withSeparator(';')
+                    .build();
+
+            questions = csvToBean.stream()
+                    .map(QuestionDto::toDomainObject)
+                    .toList();
+
+            reader.close();
         } catch (IOException e) {
             throw new QuestionReadException("Can't read file %s".formatted(fileNameProvider.getTestFileName()), e);
         }
