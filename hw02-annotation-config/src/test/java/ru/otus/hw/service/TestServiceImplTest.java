@@ -1,9 +1,8 @@
 package ru.otus.hw.service;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.hw.dao.QuestionDao;
@@ -14,22 +13,23 @@ import ru.otus.hw.domain.Student;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TestServiceImplTest {
 
-    private TestService testService;
+    @InjectMocks
+    private TestServiceImpl testService;
 
     @Mock
     private IOService ioService;
     @Mock
     private QuestionDao questionDao;
-
-    @BeforeEach
-    void setUp() {
-        testService = new TestServiceImpl(ioService, questionDao);
-    }
 
     @Test
     void executeTestFor_Successfully() {
@@ -52,8 +52,8 @@ class TestServiceImplTest {
 
         when(questionDao.findAll())
                 .thenReturn(questions);
-        when(ioService.readStringWithPrompt(any()))
-                .thenReturn("A12");
+        when(ioService.readIntForRangeWithPrompt(anyInt(), anyInt(), any(), any()))
+                .thenReturn(2);
 
         var testResult = testService.executeTestFor(student);
 
@@ -63,7 +63,7 @@ class TestServiceImplTest {
 
         verify(ioService, times(14)).printLine(anyString());
         verify(ioService, times(1)).printFormattedLine(anyString());
-        verify(ioService, times(3)).readStringWithPrompt(anyString());
+        verify(ioService, times(3)).readIntForRangeWithPrompt(anyInt(), anyInt(), any(), any());
         verify(questionDao, times(1)).findAll();
     }
 }

@@ -26,9 +26,9 @@ public class TestServiceImpl implements TestService {
             for (var answer: question.answers()) {
                 ioService.printLine("- %s".formatted(answer.text()));
             }
-            var answerText = ioService.readStringWithPrompt("Please write answer:");
-            var isAnswerValid = question.answers().stream()
-                    .anyMatch(answer -> answer.text().equals(answerText) && answer.isCorrect());
+            var answerIndex = ioService.readIntForRangeWithPrompt(1, question.answers().size(),
+                    "Please write answer:", "Incorrect answer");
+            var isAnswerValid = question.answers().get(answerIndex - 1).isCorrect();
             ioService.printLine("");
             testResult.applyAnswer(question, isAnswerValid);
         }
