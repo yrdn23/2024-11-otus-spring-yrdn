@@ -24,7 +24,14 @@ public class TestServiceImpl implements TestService {
         var testResult = new TestResult(student);
 
         for (var question: questions) {
-            var isAnswerValid = false; // Задать вопрос, получить ответ
+            ioService.printLine(question.text());
+            for (var answer: question.answers()) {
+                ioService.printLine("- %s".formatted(answer.text()));
+            }
+            var answerIndex = ioService.readIntForRangeWithPromptLocalized(1, question.answers().size(),
+                    "TestService.answer.the.question", "TestService.answer.invalid.answer");
+            var isAnswerValid = question.answers().get(answerIndex - 1).isCorrect();
+            ioService.printLine("");
             testResult.applyAnswer(question, isAnswerValid);
         }
         return testResult;
