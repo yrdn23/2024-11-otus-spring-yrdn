@@ -36,12 +36,14 @@ public class JdbcBookRepository implements BookRepository {
         var params = new MapSqlParameterSource()
                 .addValue("id", id, Types.NUMERIC);
         return Optional.ofNullable(jdbcTemplate.query(
-                "select b.id, b.title, b.author_id, a.full_name, bg.book_id, bg.genre_id, g.name " +
-                        "from books b " +
-                        "join authors a on b.author_id = a.id " +
-                        "join books_genres bg on b.id = bg.book_id " +
-                        "join genres g on bg.genre_id = g.id " +
-                        "where b.id = :id",
+                """
+                        select b.id, b.title, b.author_id, a.full_name, bg.book_id, bg.genre_id, g.name
+                        from books b
+                             inner join authors a on b.author_id = a.id
+                             inner join books_genres bg on b.id = bg.book_id
+                             inner join genres g on bg.genre_id = g.id
+                        where b.id = :id
+                        """,
                 params,
                 new BookResultSetExtractor()));
     }
@@ -72,8 +74,12 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private List<Book> getAllBooksWithoutGenres() {
-        return jdbcTemplate.query("select b.id, b.title, b.author_id, a.full_name " +
-                        "from books b, authors a where b.author_id = a.id",
+        return jdbcTemplate.query(
+                """
+                        select b.id, b.title, b.author_id, a.full_name
+                        from books b
+                             inner join authors a on b.author_id = a.id
+                        """,
                 new BookRowMapper());
     }
 
@@ -89,11 +95,12 @@ public class JdbcBookRepository implements BookRepository {
     ) {
         var genresMap = genres.stream()
                 .collect(Collectors.toMap(Genre::getId, genre -> genre));
+        var relationsMap = relations.stream()
+                        .collect(Collectors.groupingBy(BookGenreRelation::bookId));
         booksWithoutGenres.forEach(
                 book -> book.setGenres(
-                        relations.stream()
-                                .filter(relation -> relation.bookId == book.getId())
-                                .map(relation -> genresMap.get(relation.genreId))
+                        relationsMap.get(book.getId()).stream()
+                                .map(relation -> genresMap.get(relation.genreId()))
                                 .toList()));
     }
 
