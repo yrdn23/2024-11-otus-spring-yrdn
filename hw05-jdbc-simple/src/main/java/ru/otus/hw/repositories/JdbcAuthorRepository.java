@@ -32,11 +32,7 @@ public class JdbcAuthorRepository implements AuthorRepository {
                 params,
                 new AuthorRowMapper());
 
-        if (authors.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(authors.get(0));
+        return authors.stream().findFirst();
     }
 
     private static class AuthorRowMapper implements RowMapper<Author> {

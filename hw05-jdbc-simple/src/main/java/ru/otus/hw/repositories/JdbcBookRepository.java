@@ -28,28 +28,28 @@ public class JdbcBookRepository implements BookRepository {
         var params = new MapSqlParameterSource()
                 .addValue("id", id, Types.NUMERIC);
         var books = jdbcTemplate.query(
-                "select b.id, b.title, b.author_id, a.full_name, b.genre_id, g.name " +
-                        "from books b " +
-                        "join authors a on b.author_id = a.id " +
-                        "join genres g on b.genre_id = g.id " +
-                        "where b.id = :id",
+                """
+                        select b.id, b.title, b.author_id, a.full_name, b.genre_id, g.name
+                        from books b
+                             inner join authors a on b.author_id = a.id
+                             inner join genres g on b.genre_id = g.id
+                        where b.id = :id
+                        """,
                 params,
                 new BookRowMapper());
 
-        if (books.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(books.get(0));
+        return books.stream().findFirst();
     }
 
     @Override
     public List<Book> findAll() {
         return jdbcTemplate.query(
-                "select b.id, b.title, b.author_id, a.full_name, b.genre_id, g.name " +
-                        "from books b " +
-                        "join authors a on b.author_id = a.id " +
-                        "join genres g on b.genre_id = g.id ",
+                """
+                        select b.id, b.title, b.author_id, a.full_name, b.genre_id, g.name
+                        from books b
+                             join authors a on b.author_id = a.id
+                             join genres g on b.genre_id = g.id
+                        """,
                 new BookRowMapper());
     }
 

@@ -32,11 +32,7 @@ public class JdbcGenreRepository implements GenreRepository {
                 params,
                 new GenreRowMapper());
 
-        if (genres.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(genres.get(0));
+        return genres.stream().findFirst();
     }
 
     private static class GenreRowMapper implements RowMapper<Genre> {
