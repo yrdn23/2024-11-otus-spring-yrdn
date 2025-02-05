@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class JdbcAuthorRepository implements AuthorRepository {
+public class JpaAuthorRepository implements AuthorRepository {
 
     private final NamedParameterJdbcOperations jdbcTemplate;
 

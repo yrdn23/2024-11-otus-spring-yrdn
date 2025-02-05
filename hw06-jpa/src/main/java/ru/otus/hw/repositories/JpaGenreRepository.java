@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class JdbcGenreRepository implements GenreRepository {
+public class JpaGenreRepository implements GenreRepository {
 
     private final NamedParameterJdbcOperations jdbcTemplate;
 

@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class JdbcBookRepository implements BookRepository {
+public class JpaBookRepository implements BookRepository {
 
     private final NamedParameterJdbcOperations jdbcTemplate;
 
