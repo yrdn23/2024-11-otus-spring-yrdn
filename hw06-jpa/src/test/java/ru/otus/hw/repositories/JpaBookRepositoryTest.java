@@ -51,7 +51,8 @@ class JpaBookRepositoryTest {
         var actualBooks = repository.findAll();
         var expectedBooks = getDbBooks();
 
-        assertThat(actualBooks).containsExactlyElementsOf(expectedBooks);
+        assertThat(actualBooks).isNotEmpty()
+                .containsExactlyElementsOf(expectedBooks);
         actualBooks.forEach(System.out::println);
     }
 
@@ -60,7 +61,8 @@ class JpaBookRepositoryTest {
     void shouldSaveNewBook() {
         var expectedBook = new Book(0, "BookTitle_10500",
                 authorRepository.findById(ID).orElse(null),
-                genreRepository.findById(ID).orElse(null));
+                genreRepository.findById(ID).orElse(null),
+                null);
         var returnedBook = repository.save(expectedBook);
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
@@ -77,7 +79,8 @@ class JpaBookRepositoryTest {
     void shouldSaveUpdatedBook() {
         var expectedBook = new Book(1L, "BookTitle_10500",
                 authorRepository.findById(ID + 1).orElse(null),
-                genreRepository.findById(ID + 1).orElse(null));
+                genreRepository.findById(ID + 1).orElse(null),
+                null);
 
         assertThat(repository.findById(expectedBook.getId()))
                 .isPresent()
