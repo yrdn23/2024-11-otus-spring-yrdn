@@ -1,48 +1,45 @@
 package ru.otus.hw.repositories;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Genre;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Репозиторий на основе Jdbc для работы с книгами ")
-@JdbcTest
-@Import({JpaBookRepository.class, JpaGenreRepository.class})
+@DisplayName("Репозиторий Books")
+@DataJpaTest
+@Import({JpaBookRepository.class, JpaAuthorRepository.class, JpaGenreRepository.class})
 class JpaBookRepositoryTest {
 
+    private static final long ID = 1L;
+
     @Autowired
-    private JpaBookRepository repositoryJdbc;
+    private JpaBookRepository repository;
 
-    private List<Author> dbAuthors;
+    @Autowired
+    private JpaAuthorRepository authorRepository;
 
-    private List<Genre> dbGenres;
+    @Autowired
+    private JpaGenreRepository genreRepository;
 
-    private List<Book> dbBooks;
-
-    @BeforeEach
-    void setUp() {
-        dbAuthors = getDbAuthors();
-        dbGenres = getDbGenres();
-        dbBooks = getDbBooks(dbAuthors, dbGenres);
-    }
+    @Autowired
+    private TestEntityManager em;
 
     @DisplayName("должен загружать книгу по id")
     @ParameterizedTest
-    @MethodSource("getDbBooks")
-    void shouldReturnCorrectBookById(Book expectedBook) {
-        var actualBook = repositoryJdbc.findById(expectedBook.getId());
+    @MethodSource("getBookIds")
+    void shouldReturnCorrectBookById(long expectedBookId) {
+        var actualBook = repository.findById(expectedBookId);
+        var expectedBook = em.find(Book.class, expectedBookId);
         assertThat(actualBook).isPresent()
                 .get()
                 .isEqualTo(expectedBook);
@@ -51,8 +48,8 @@ class JpaBookRepositoryTest {
     @DisplayName("должен загружать список всех книг")
     @Test
     void shouldReturnCorrectBooksList() {
-        var actualBooks = repositoryJdbc.findAll();
-        var expectedBooks = dbBooks;
+        var actualBooks = repository.findAll();
+        var expectedBooks = getDbBooks();
 
         assertThat(actualBooks).containsExactlyElementsOf(expectedBooks);
         actualBooks.forEach(System.out::println);
@@ -61,13 +58,15 @@ class JpaBookRepositoryTest {
     @DisplayName("должен сохранять новую книгу")
     @Test
     void shouldSaveNewBook() {
-        var expectedBook = new Book(0, "BookTitle_10500", dbAuthors.get(0), dbGenres.get(0));
-        var returnedBook = repositoryJdbc.save(expectedBook);
+        var expectedBook = new Book(0, "BookTitle_10500",
+                authorRepository.findById(ID).orElse(null),
+                genreRepository.findById(ID).orElse(null));
+        var returnedBook = repository.save(expectedBook);
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedBook);
 
-        assertThat(repositoryJdbc.findById(returnedBook.getId()))
+        assertThat(repository.findById(returnedBook.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedBook);
@@ -76,53 +75,43 @@ class JpaBookRepositoryTest {
     @DisplayName("должен сохранять измененную книгу")
     @Test
     void shouldSaveUpdatedBook() {
-        var expectedBook = new Book(1L, "BookTitle_10500", dbAuthors.get(2), dbGenres.get(2));
+        var expectedBook = new Book(1L, "BookTitle_10500",
+                authorRepository.findById(ID + 1).orElse(null),
+                genreRepository.findById(ID + 1).orElse(null));
 
-        assertThat(repositoryJdbc.findById(expectedBook.getId()))
+        assertThat(repository.findById(expectedBook.getId()))
                 .isPresent()
                 .get()
                 .isNotEqualTo(expectedBook);
 
-        var returnedBook = repositoryJdbc.save(expectedBook);
+        var returnedBook = repository.save(expectedBook);
         assertThat(returnedBook).isNotNull()
                 .matches(book -> book.getId() > 0)
                 .usingRecursiveComparison().ignoringExpectedNullFields().isEqualTo(expectedBook);
 
-        assertThat(repositoryJdbc.findById(returnedBook.getId()))
+        assertThat(repository.findById(returnedBook.getId()))
                 .isPresent()
                 .get()
                 .isEqualTo(returnedBook);
     }
 
-    @DisplayName("должен удалять книгу по id ")
+    @DisplayName("должен удалять книгу по id")
     @Test
     void shouldDeleteBook() {
-        assertThat(repositoryJdbc.findById(1L)).isPresent();
-        repositoryJdbc.deleteById(1L);
-        assertThat(repositoryJdbc.findById(1L)).isEmpty();
+        assertThat(repository.findById(ID)).isPresent();
+        repository.deleteById(ID);
+        assertThat(repository.findById(ID)).isEmpty();
     }
 
-    private static List<Author> getDbAuthors() {
+    private List<Book> getDbBooks() {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new Author(id, "Author_" + id))
+                .map(id -> em.find(Book.class, id))
                 .toList();
     }
 
-    private static List<Genre> getDbGenres() {
+    private static List<Long> getBookIds() {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new Genre(id, "Genre_" + id))
+                .map(Long::valueOf)
                 .toList();
-    }
-
-    private static List<Book> getDbBooks(List<Author> dbAuthors, List<Genre> dbGenres) {
-        return IntStream.range(1, 4).boxed()
-                .map(id -> new Book(id, "BookTitle_" + id, dbAuthors.get(id - 1), dbGenres.get(id - 1)))
-                .toList();
-    }
-
-    private static List<Book> getDbBooks() {
-        var dbAuthors = getDbAuthors();
-        var dbGenres = getDbGenres();
-        return getDbBooks(dbAuthors, dbGenres);
     }
 }
