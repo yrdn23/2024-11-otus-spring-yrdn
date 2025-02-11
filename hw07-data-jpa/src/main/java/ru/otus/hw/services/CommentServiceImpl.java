@@ -26,13 +26,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<Comment> findByBookId(long bookId) {
-        var book = bookRepository.findById(bookId);
-        if (book.isPresent()) {
-            if (!book.get().getComments().isEmpty()) {
-                return book.get().getComments();
-            }
-        }
-        return List.of();
+        return commentRepository.findByBookId(bookId);
     }
 
     @Transactional
