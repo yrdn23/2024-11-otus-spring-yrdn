@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import ru.otus.hw.models.Genre;
 
 import java.util.List;
@@ -15,14 +14,11 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий Genres")
-@DataJpaTest
-class JpaGenreRepositoryTest {
+@DataMongoTest
+class GenreRepositoryTest {
 
     @Autowired
     private GenreRepository repository;
-
-    @Autowired
-    private TestEntityManager em;
 
     @DisplayName("должен загружать жанр по id")
     @ParameterizedTest
@@ -46,7 +42,7 @@ class JpaGenreRepositoryTest {
 
     private static List<Genre> getDbGenres() {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new Genre(id, "Genre_" + id))
+                .map(id -> new Genre(String.valueOf(id), "Genre_" + id))
                 .toList();
     }
 }
