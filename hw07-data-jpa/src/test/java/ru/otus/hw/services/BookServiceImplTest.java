@@ -4,11 +4,10 @@ package ru.otus.hw.services;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.Application;
+import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
 
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -67,6 +67,28 @@ class BookServiceImplTest {
         assertEquals(NEW_TITLE, updatedBook.get().getTitle());
         assertEquals(ID + 1, updatedBook.get().getAuthor().getId());
         assertEquals(ID + 1, updatedBook.get().getGenre().getId());
+    }
+
+    @Test
+    void shouldNotUpdateBookWithExceptionByAuthor() {
+        Optional<Book> book = bookService.findById(ID);
+        assertTrue(book.isPresent());
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> bookService.update(ID, NEW_TITLE, ID + 100, ID + 1));
+
+        assertEquals("Author with id 101 not found", exception.getMessage());
+    }
+
+    @Test
+    void shouldNotUpdateBookWithExceptionByGenre() {
+        Optional<Book> book = bookService.findById(ID);
+        assertTrue(book.isPresent());
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> bookService.update(ID, NEW_TITLE, ID + 1, ID + 100));
+
+        assertEquals("Genre with id 101 not found", exception.getMessage());
     }
 
     @Test
