@@ -1,13 +1,12 @@
 package ru.otus.hw.repositories;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
@@ -20,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий Books")
 @DataMongoTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class BookRepositoryTest {
 
     private static final String ID = "1";
@@ -57,7 +57,6 @@ class BookRepositoryTest {
 
     @DisplayName("должен сохранять новую книгу")
     @Test
-    @Disabled
     void shouldSaveNewBook() {
         var expectedBook = new Book("0", "BookTitle_10500",
                 authorRepository.findById(ID).orElse(null),
@@ -75,7 +74,6 @@ class BookRepositoryTest {
 
     @DisplayName("должен сохранять измененную книгу")
     @Test
-    @Disabled
     void shouldSaveUpdatedBook() {
         var expectedBook = new Book("1", "BookTitle_10500",
                 authorRepository.findById(ID2).orElse(null),
@@ -99,7 +97,6 @@ class BookRepositoryTest {
 
     @DisplayName("должен удалять книгу по id")
     @Test
-    @Disabled
     void shouldDeleteBook() {
         assertThat(repository.findById(ID)).isPresent();
         repository.deleteById(ID);
