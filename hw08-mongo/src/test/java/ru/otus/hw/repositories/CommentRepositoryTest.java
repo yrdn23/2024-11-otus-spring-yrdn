@@ -40,6 +40,7 @@ class CommentRepositoryTest {
     @MethodSource("getComments")
     void shouldReturnCorrectCommentById(Comment expectedComment) {
         var actualComment = repository.findById(expectedComment.getId());
+        System.out.println(actualComment.get().getBook().getTitle());
         assertThat(actualComment).isPresent()
                 .get()
                 .isEqualTo(expectedComment);
