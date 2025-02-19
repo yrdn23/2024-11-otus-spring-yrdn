@@ -19,18 +19,16 @@ public class CommentServiceImpl implements CommentService {
 
     private final BookRepository bookRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public Optional<Comment> findById(String id) {
         return commentRepository.findById(id);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     @Override
     public List<Comment> findByBookId(String bookId) {
-        // TODO
-        // return commentRepository.findByBookId(bookId);
-        return List.of();
+        return commentRepository.findByBookId(bookId);
     }
 
     @Transactional
