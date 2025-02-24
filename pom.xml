@@ -19,5 +19,6 @@
         <module>hw05-jdbc-simple</module>
         <module>hw06-jpa</module>
         <module>hw07-data-jpa</module>
+        <module>hw08-mongo</module>
     </modules>
 </project>
