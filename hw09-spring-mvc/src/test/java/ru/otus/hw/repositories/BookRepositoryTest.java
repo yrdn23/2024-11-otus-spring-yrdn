@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий Books")
 @DataJpaTest
-class JpaBookRepositoryTest {
+class BookRepositoryTest {
 
     private static final long ID = 1L;
 

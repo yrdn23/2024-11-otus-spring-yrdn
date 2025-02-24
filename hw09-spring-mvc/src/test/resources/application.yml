@@ -4,13 +4,7 @@ spring:
   sql:
     init:
       mode: always
-      data-locations: data.sql
-      schema-locations: schema.sql
-  shell:
-    interactive:
-      enabled: false
-    script:
-      enabled: false
+      data-locations: classpath:data.sql
   jpa:
     generate-ddl: false
     hibernate:

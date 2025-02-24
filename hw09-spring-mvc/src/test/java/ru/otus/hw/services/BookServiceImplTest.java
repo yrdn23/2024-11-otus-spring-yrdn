@@ -4,7 +4,9 @@ package ru.otus.hw.services;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -19,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@Transactional(propagation = Propagation.NEVER)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class BookServiceImplTest {
 
     private static final long ID = 1L;
@@ -30,6 +30,7 @@ class BookServiceImplTest {
     private BookService bookService;
 
     @Test
+    @Transactional(readOnly = true)
     void shouldReturnCorrectBookById() {
         Optional<Book> book = bookService.findById(ID);
         assertTrue(book.isPresent());
@@ -37,12 +38,15 @@ class BookServiceImplTest {
     }
 
     @Test
+    @Transactional(readOnly = true)
     void shouldReturnCorrectBooksList() {
         List<Book> books = bookService.findAll();
         assertEquals(3, books.size());
     }
 
     @Test
+    @Transactional
+    @Rollback
     void shouldSaveNewBook() {
         var id = bookService.insert(NEW_TITLE, ID, ID).getId();
 
@@ -55,6 +59,8 @@ class BookServiceImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void shouldUpdateBook() {
         Optional<Book> book = bookService.findById(ID);
         assertTrue(book.isPresent());
@@ -70,6 +76,8 @@ class BookServiceImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void shouldNotUpdateBookWithExceptionByAuthor() {
         Optional<Book> book = bookService.findById(ID);
         assertTrue(book.isPresent());
@@ -81,6 +89,8 @@ class BookServiceImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void shouldNotUpdateBookWithExceptionByGenre() {
         Optional<Book> book = bookService.findById(ID);
         assertTrue(book.isPresent());
@@ -92,6 +102,8 @@ class BookServiceImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void shouldDeleteBook() {
         Optional<Book> book = bookService.findById(ID);
         assertTrue(book.isPresent());

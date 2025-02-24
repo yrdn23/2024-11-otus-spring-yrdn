@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all Book Comments</title>
+    <style>
+        body {
+            padding: 10px;
+        }
+
+        .comments {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .comments tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .comments td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<h3>Comments</h3>
+
+<a href="/">Home</a><br/><br/>
+<a href="/books/">Books</a><br/><br/>
+
+<table class="comments">
+    <thead>
+    <tr>
+        <th>Text</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="comment : ${comments}">
+        <td th:text="${comment.text}">Text</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

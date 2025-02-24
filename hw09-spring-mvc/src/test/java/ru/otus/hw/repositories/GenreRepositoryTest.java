@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий Genres")
 @DataJpaTest
-class JpaGenreRepositoryTest {
+class GenreRepositoryTest {
 
     @Autowired
     private GenreRepository repository;

@@ -47,6 +47,12 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
+    public Book save(Book book) {
+        return bookRepository.save(book);
+    }
+
+    @Transactional
+    @Override
     public void deleteById(long id) {
         bookRepository.deleteById(id);
     }

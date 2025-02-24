@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.models.Comment;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @Transactional(propagation = Propagation.NEVER)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class CommentServiceImplTest {
 
     private static final long ID = 1L;
@@ -27,6 +27,7 @@ class CommentServiceImplTest {
     private CommentService commentService;
 
     @Test
+    @Transactional(readOnly = true)
     void shouldReturnCorrectCommentById() {
         Optional<Comment> comment = commentService.findById(ID);
         assertTrue(comment.isPresent());
@@ -34,12 +35,15 @@ class CommentServiceImplTest {
     }
 
     @Test
+    @Transactional(readOnly = true)
     void shouldReturnAllComments() {
         List<Comment> comments = commentService.findByBookId(ID);
         assertEquals(1, comments.size());
     }
 
     @Test
+    @Transactional
+    @Rollback
     void shouldInsertComment() {
         var id = commentService.insert(NEW_TEXT, ID).getId();
 
@@ -51,6 +55,8 @@ class CommentServiceImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void shouldUpdateComment() {
         Optional<Comment> comment = commentService.findById(ID);
         assertTrue(comment.isPresent());
@@ -65,6 +71,8 @@ class CommentServiceImplTest {
     }
 
     @Test
+    @Transactional
+    @Rollback
     void shouldDeleteComment() {
         Optional<Comment> comment = commentService.findById(ID);
         assertTrue(comment.isPresent());
