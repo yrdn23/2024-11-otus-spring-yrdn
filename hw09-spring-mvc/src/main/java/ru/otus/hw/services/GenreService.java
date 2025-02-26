@@ -9,4 +9,6 @@ public interface GenreService {
     List<Genre> findAll();
 
     Optional<Genre> findById(long id);
+
+    Genre save(Genre genre);
 }

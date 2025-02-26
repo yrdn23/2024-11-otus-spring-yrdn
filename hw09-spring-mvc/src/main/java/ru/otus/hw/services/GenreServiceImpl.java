@@ -22,4 +22,9 @@ public class GenreServiceImpl implements GenreService {
     public Optional<Genre> findById(long id) {
         return genreRepository.findById(id);
     }
+
+    @Override
+    public Genre save(Genre genre) {
+        return genreRepository.save(genre);
+    }
 }
