@@ -9,4 +9,6 @@ public interface AuthorService {
     List<Author> findAll();
 
     Optional<Author> findById(long id);
+
+    Author save(Author author);
 }
