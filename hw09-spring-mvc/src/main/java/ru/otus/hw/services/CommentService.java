@@ -15,4 +15,6 @@ public interface CommentService {
     Comment update(long id, String text, long bookId);
 
     void deleteById(long id);
+
+    Comment save(Comment comment);
 }

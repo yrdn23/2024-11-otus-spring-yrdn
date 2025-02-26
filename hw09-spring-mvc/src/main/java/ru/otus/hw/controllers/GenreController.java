@@ -30,7 +30,8 @@ public class GenreController {
 
     @GetMapping("/genres/genreEdit")
     public String genreEditPage(@RequestParam("id") long id, Model model) {
-        Genre genre = genreService.findById(id).orElseThrow(() -> new EntityNotFoundException("Genre not found"));
+        Genre genre = genreService.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Genre not found"));
         model.addAttribute("genre", genre);
         return "genreEdit";
     }

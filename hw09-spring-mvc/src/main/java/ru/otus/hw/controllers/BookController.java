@@ -38,7 +38,8 @@ public class BookController {
 
     @GetMapping("/books/bookEdit")
     public String bookEditPage(@RequestParam("id") long id, Model model) {
-        Book book = bookService.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+        Book book = bookService.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found"));
         model.addAttribute("book", book);
         List<Author> authors = authorService.findAll();
         model.addAttribute("authors", authors);

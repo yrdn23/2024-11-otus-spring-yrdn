@@ -31,15 +31,22 @@
 
 <h3>Comments</h3>
 
+<a href="commentEdit.html" th:href="@{/comments/commentAdd(book_id=${book.id})}">Add</a><br/><br/>
+
 <table class="comments">
     <thead>
     <tr>
         <th>Text</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="comment : ${comments}">
         <td th:text="${comment.text}">Text</td>
+        <td>
+            <a href="commentEdit.html" th:href="@{/comments/commentEdit(id=${comment.id})}">Edit</a>
+            <a href="commentDelete.html" th:href="@{/comments/commentDelete(id=${comment.id})}">Delete</a>
+        </td>
     </tr>
     </tbody>
 </table>

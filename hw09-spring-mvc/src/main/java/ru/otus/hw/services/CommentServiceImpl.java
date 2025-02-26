@@ -55,4 +55,11 @@ public class CommentServiceImpl implements CommentService {
         var comment = new Comment(id, text, book);
         return commentRepository.save(comment);
     }
+
+    @Override
+    public Comment save(Comment comment) {
+        var book = bookRepository.findById(comment.getBook().getId()).orElse(null);
+        comment.setBook(book);
+        return commentRepository.save(comment);
+    }
 }

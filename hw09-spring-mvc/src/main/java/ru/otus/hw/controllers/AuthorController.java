@@ -30,7 +30,8 @@ public class AuthorController {
 
     @GetMapping("/authors/authorEdit")
     public String authorEditPage(@RequestParam("id") long id, Model model) {
-        Author author = authorService.findById(id).orElseThrow(() -> new EntityNotFoundException("Author not found"));
+        Author author = authorService.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Author not found"));
         model.addAttribute("author", author);
         return "authorEdit";
     }
