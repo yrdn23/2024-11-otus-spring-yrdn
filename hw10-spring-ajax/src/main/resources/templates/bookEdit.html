@@ -21,6 +21,27 @@
             margin-top: 10px;
         }
     </style>
+    <script>
+        function bookSave() {
+            const savedBookContainer = document.getElementById("saved-book")
+            const idInput = document.getElementById("id-input")
+            const titleInput = document.getElementById("book-name-input")
+            const authorInput = document.getElementById("book-author-input")
+            const author = {id: authorInput.value}
+            const genreInput = document.getElementById("book-genre-input")
+            const genre = {id: genreInput.value}
+            const book = { id: idInput.value, title: titleInput.value, author: author, genre: genre}
+            fetch("/books", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)})
+                .then(rawResponse => rawResponse.json())
+                .then(json => savedBookContainer.innerHTML = JSON.stringify(json, null, 4))
+        }
+    </script>
 </head>
 <body>
 
@@ -51,10 +72,13 @@
     </div>
 
     <div class="row">
-        <button type="submit">Save</button>
+        <button type="button" onclick="bookSave()">Save</button>
         <a href="bookList.html" th:href="@{/books/}"><button type="button">Cancel</button></a>
     </div>
 </form>
+
+<h3>Saved Book:</h3>
+<pre id="saved-book"></pre>
 
 </body>
 </html>

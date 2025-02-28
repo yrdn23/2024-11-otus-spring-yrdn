@@ -43,21 +43,6 @@ class BookControllerTest {
     private GenreService genreService;
 
     @Test
-    void testBookListPageSuccessful() throws Exception {
-        var books = List.of(
-                new Book(1, "TestBook_1", new Author(), new Genre(), null),
-                new Book(2, "TestBook_2", new Author(), new Genre(), null));
-        when(bookService.findAll()).thenReturn(books);
-
-        mvc.perform(get("/books/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("bookList"))
-                .andExpect(model().attribute("books", hasSize(books.size())))
-                .andExpect(model().attribute("books", equalTo(books)))
-                .andExpect(content().string(containsString(books.get(0).getTitle())));
-    }
-
-    @Test
     void testBookEditPageSuccessful() throws Exception {
         var bookId = 3;
         var book = new Book(bookId, "TestBook_3", new Author(), new Genre(), null);
@@ -114,8 +99,7 @@ class BookControllerTest {
     @Test
     void testBookDeleteSuccessful() throws Exception {
         var bookId = 7;
-        mvc.perform(post("/books/bookDelete")
-                        .param("id", String.valueOf(bookId)))
+        mvc.perform(post("/books/%s".formatted(bookId)))
                 .andExpect(redirectedUrl("/books/"));
     }
 }

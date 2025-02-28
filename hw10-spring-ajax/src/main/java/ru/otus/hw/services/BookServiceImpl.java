@@ -8,6 +8,7 @@ import ru.otus.hw.models.Book;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
+import ru.otus.hw.rest.dto.BookDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +50,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book save(Book book) {
         return bookRepository.save(book);
+    }
+
+    @Transactional
+    @Override
+    public Book save(BookDto bookDto) {
+        return save(bookDto.getId(), bookDto.getTitle(), bookDto.getAuthor().getId(), bookDto.getGenre().getId());
     }
 
     @Transactional

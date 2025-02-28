@@ -23,6 +23,7 @@
             width: 50px;
         }
     </style>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -43,19 +44,31 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="book : ${books}">
-        <td th:text="${book.getTitle()}">Title</td>
-        <td th:text="${book.author.fullName}">Author</td>
-        <td th:text="${book.genre.name}">Genre</td>
-        <td>
-            <a href="bookEdit.html" th:href="@{/books/bookEdit(id=${book.id})}">Edit</a>
-            <a href="bookDelete.html" th:href="@{/books/bookDelete(id=${book.id})}">Delete</a>
-        </td>
-        <td>
-            <a href="commentList.html" th:href="@{/comments/(id=${book.id})}">List</a>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    $(function () {
+        $.get('/books/list').done(function (books) {
+            books.forEach(function (book) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${book.title}</td>
+                        <td>${book.author.fullName}</td>
+                        <td>${book.genre.name}</td>
+                        <td>
+                            <a href="/books/bookEdit?id=${book.id}">Edit</a>
+                            <a href="/books/bookDelete?id=${book.id}">Delete</a>
+                        </td>
+                        <td>
+                            <a href="/comments/?id=${book.id}">List</a>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
+
 </body>
 </html>
