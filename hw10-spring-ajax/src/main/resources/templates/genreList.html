@@ -23,6 +23,7 @@
             width: 50px;
         }
     </style>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -40,13 +41,23 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="genre : ${genres}">
-        <td th:text="${genre.getName()}">Name</td>
-        <td>
-            <a href="genreEdit.html" th:href="@{/genres/genreEdit(id=${genre.id})}">Edit</a>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    $(function () {
+        $.get('/genres/list').done(function (genres) {
+            genres.forEach(function (genre) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${genre.name}</td>
+                        <td><a href="/genres/genreEdit?id=${genre.id}">Edit</a></td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
+
 </body>
 </html>

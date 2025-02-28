@@ -21,6 +21,23 @@
             margin-top: 10px;
         }
     </style>
+    <script>
+        function genreSave() {
+            const savedGenreContainer = document.getElementById("saved-genre")
+            const idInput = document.getElementById("id-input")
+            const nameInput = document.getElementById("genre-name-input")
+            const genre = { id: idInput.value, name: nameInput.value}
+            fetch("/genres", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(genre)})
+                .then(rawResponse => rawResponse.json())
+                .then(json => savedGenreContainer.innerHTML = JSON.stringify(json, null, 4))
+        }
+    </script>
 </head>
 <body>
 
@@ -37,10 +54,13 @@
     </div>
 
     <div class="row">
-        <button type="submit">Save</button>
+        <button type="button" onclick="genreSave()" >Save</button>
         <a href="genreList.html" th:href="@{/genres/}"><button type="button">Cancel</button></a>
     </div>
 </form>
+
+<h3>Saved Genre:</h3>
+<pre id="saved-genre"></pre>
 
 </body>
 </html>

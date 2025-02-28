@@ -8,12 +8,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.services.GenreService;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,21 +29,6 @@ class GenreControllerTest {
 
     @MockBean
     private GenreService genreService;
-
-    @Test
-    void testGenreListPageSuccessful() throws Exception {
-        var genres = List.of(
-                new Genre(1, "Genre_1"),
-                new Genre(2, "Genre_2"));
-        when(genreService.findAll()).thenReturn(genres);
-
-        mvc.perform(get("/genres/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("genreList"))
-                .andExpect(model().attribute("genres", hasSize(genres.size())))
-                .andExpect(model().attribute("genres", equalTo(genres)))
-                .andExpect(content().string(containsString(genres.get(0).getName())));
-    }
 
     @Test
     void testGenreEditPageSuccessful() throws Exception {

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.rest.dto.AuthorDto;
 import ru.otus.hw.services.AuthorService;
 
@@ -21,13 +20,9 @@ public class AuthorRestController {
 
     @GetMapping("/authors/list")
     public List<AuthorDto> authorList() {
-        var authors = authorService.findAll().stream()
+        return authorService.findAll().stream()
                 .map(AuthorDto::toDto)
                 .toList();
-        if (authors.isEmpty()) {
-            throw new EntityNotFoundException("Authors not found!");
-        }
-        return authors;
     }
 
     @PostMapping("/authors")
