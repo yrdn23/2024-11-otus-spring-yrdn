@@ -8,12 +8,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.services.AuthorService;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,21 +29,6 @@ class AuthorControllerTest {
 
     @MockBean
     private AuthorService authorService;
-
-    @Test
-    void testAuthorListPageSuccessful() throws Exception {
-        var authors = List.of(
-                new Author(1, "Author_1"),
-                new Author(2, "Author_2"));
-        when(authorService.findAll()).thenReturn(authors);
-
-        mvc.perform(get("/authors/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("authorList"))
-                .andExpect(model().attribute("authors", hasSize(authors.size())))
-                .andExpect(model().attribute("authors", equalTo(authors)))
-                .andExpect(content().string(containsString(authors.get(0).getFullName())));
-    }
 
     @Test
     void testAuthorEditPageSuccessful() throws Exception {

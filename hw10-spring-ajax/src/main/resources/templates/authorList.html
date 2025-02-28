@@ -23,6 +23,7 @@
             width: 50px;
         }
     </style>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -40,13 +41,23 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="author : ${authors}">
-        <td th:text="${author.getFullName()}">Name</td>
-        <td>
-            <a href="authorEdit.html" th:href="@{/authors/authorEdit(id=${author.id})}">Edit</a>
-        </td>
-    </tr>
     </tbody>
 </table>
+
+<script>
+    $(function () {
+        $.get('/authors/list').done(function (authors) {
+            authors.forEach(function (author) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${author.fullName}</td>
+                        <td><a href="/authors/authorEdit?id=${author.id}">Edit</a></td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
+
 </body>
 </html>
