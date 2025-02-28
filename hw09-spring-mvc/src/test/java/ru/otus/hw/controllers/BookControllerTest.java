@@ -114,8 +114,7 @@ class BookControllerTest {
     @Test
     void testBookDeleteSuccessful() throws Exception {
         var bookId = 7;
-        mvc.perform(post("/books/bookDelete")
-                        .param("id", String.valueOf(bookId)))
+        mvc.perform(post("/books/%s".formatted(bookId)))
                 .andExpect(redirectedUrl("/books/"));
     }
 }

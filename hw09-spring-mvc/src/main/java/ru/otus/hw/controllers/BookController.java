@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -78,12 +79,9 @@ public class BookController {
         return "bookDelete";
     }
 
-    @PostMapping("/books/bookDelete")
-    public String bookDelete(@Valid @ModelAttribute("book") Book book, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            return "bookDelete";
-        }
-        bookService.deleteById(book.getId());
+    @PostMapping("/books/{id}")
+    public String bookDelete(@PathVariable("id") long id, Model model) {
+        bookService.deleteById(id);
         return "redirect:/books/";
     }
 }
