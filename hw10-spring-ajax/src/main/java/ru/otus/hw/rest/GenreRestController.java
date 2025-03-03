@@ -18,15 +18,15 @@ public class GenreRestController {
 
     private final GenreService genreService;
 
-    @GetMapping("/genres/list")
+    @GetMapping("/api/genres")
     public List<GenreDto> genreList() {
         return genreService.findAll().stream()
                 .map(GenreDto::toDto)
                 .toList();
     }
 
-    @PostMapping("/genres")
-    public ResponseEntity<GenreDto> genreAdd(@Valid @RequestBody GenreDto genreDto) {
+    @PostMapping("/api/genres")
+    public ResponseEntity<GenreDto> genreSave(@Valid @RequestBody GenreDto genreDto) {
         var savedGenre = genreService.save(genreDto.toDomainObject());
         return ResponseEntity.ok(GenreDto.toDto(savedGenre));
     }

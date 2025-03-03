@@ -1,13 +1,9 @@
 package ru.otus.hw.controllers;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
@@ -34,15 +30,6 @@ public class AuthorController {
                 .orElseThrow(() -> new EntityNotFoundException("Author not found"));
         model.addAttribute("author", author);
         return "authorEdit";
-    }
-
-    @PostMapping("/authors/authorEdit")
-    public String authorSave(@Valid @ModelAttribute("author") Author author, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            return "authorEdit";
-        }
-        authorService.save(author);
-        return "redirect:/authors/";
     }
 
     @GetMapping("/authors/authorAdd")

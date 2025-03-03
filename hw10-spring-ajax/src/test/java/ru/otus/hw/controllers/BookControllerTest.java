@@ -17,13 +17,10 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -69,22 +66,6 @@ class BookControllerTest {
     }
 
     @Test
-    void testBookSaveSuccessful() throws Exception {
-        var bookId = 5;
-        var author = new Author(bookId, "TestAuthor_5");
-        var genre = new Genre(bookId, "TestGenre_5");
-        var book = new Book(bookId, "TestBook_5", author, genre, null);
-        when(authorService.findById(bookId)).thenReturn(Optional.of(new Author()));
-        when(genreService.findById(bookId)).thenReturn(Optional.of(new Genre()));
-        when(bookService.save(book)).thenReturn(book);
-
-        mvc.perform(post("/books/bookEdit")
-                        .param("id", String.valueOf(bookId))
-                        .flashAttr("book", book))
-                .andExpect(redirectedUrl("/books/"));
-    }
-
-    @Test
     void testBookAddPageSuccessful() throws Exception {
         var bookId = 6;
         var book = new Book(bookId, "TestBook_6", new Author(), new Genre(), null);
@@ -94,12 +75,5 @@ class BookControllerTest {
                         .param("id", String.valueOf(bookId))
                         .flashAttr("book", book))
                 .andExpect(view().name("bookEdit"));
-    }
-
-    @Test
-    void testBookDeleteSuccessful() throws Exception {
-        var bookId = 7;
-        mvc.perform(post("/books/%s".formatted(bookId)))
-                .andExpect(redirectedUrl("/books/"));
     }
 }

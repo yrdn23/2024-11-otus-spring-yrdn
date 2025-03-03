@@ -38,17 +38,17 @@ class GenreRestControllerTest {
                 new Genre(2, "Genre_2"));
         when(genreService.findAll()).thenReturn(genres);
 
-        mvc.perform(get("/genres/list"))
+        mvc.perform(get("/api/genres"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(genres)));
     }
 
     @Test
-    void testAuthorAdd() throws Exception {
+    void testAuthorSave() throws Exception {
         Genre genre = new Genre(3, "Genre_3");
         when(genreService.save(genre)).thenReturn(genre);
 
-        mvc.perform(post("/genres")
+        mvc.perform(post("/api/genres")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(GenreDto.toDto(genre))))
                 .andExpect(content().json(mapper.writeValueAsString(genre)));

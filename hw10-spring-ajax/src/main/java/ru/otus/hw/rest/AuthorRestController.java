@@ -18,15 +18,15 @@ public class AuthorRestController {
 
     private final AuthorService authorService;
 
-    @GetMapping("/authors/list")
+    @GetMapping("/api/authors")
     public List<AuthorDto> authorList() {
         return authorService.findAll().stream()
                 .map(AuthorDto::toDto)
                 .toList();
     }
 
-    @PostMapping("/authors")
-    public ResponseEntity<AuthorDto> authorAdd(@Valid @RequestBody AuthorDto authorDto) {
+    @PostMapping("/api/authors")
+    public ResponseEntity<AuthorDto> authorSave(@Valid @RequestBody AuthorDto authorDto) {
         var savedAuthor = authorService.save(authorDto.toDomainObject());
         return ResponseEntity.ok(AuthorDto.toDto(savedAuthor));
     }

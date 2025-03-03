@@ -14,10 +14,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -52,18 +50,6 @@ class AuthorControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("errorCustom"))
                 .andExpect(content().string(containsString("Author not found")));
-    }
-
-    @Test
-    void testAuthorSaveSuccessful() throws Exception {
-        var authorId = 5;
-        var author = new Author(authorId, "Author_5");
-        when(authorService.save(author)).thenReturn(author);
-
-        mvc.perform(post("/authors/authorEdit")
-                        .param("id", String.valueOf(authorId))
-                        .flashAttr("author", author))
-                .andExpect(redirectedUrl("/authors/"));
     }
 
     @Test

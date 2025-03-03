@@ -27,7 +27,7 @@
             const idInput = document.getElementById("id-input")
             const fullNameInput = document.getElementById("author-name-input")
             const author = { id: idInput.value, fullName: fullNameInput.value}
-            fetch("/authors", {
+            fetch("/api/authors", {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -42,6 +42,7 @@
 <body>
 
 <a href="/">Home</a><br/><br/>
+<a href="/authors/">Authors</a><br/><br/>
 
 <h3>Author</h3>
 

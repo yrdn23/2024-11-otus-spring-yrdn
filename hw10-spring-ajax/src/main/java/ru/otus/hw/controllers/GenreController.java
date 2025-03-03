@@ -1,13 +1,9 @@
 package ru.otus.hw.controllers;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Genre;
@@ -34,15 +30,6 @@ public class GenreController {
                 .orElseThrow(() -> new EntityNotFoundException("Genre not found"));
         model.addAttribute("genre", genre);
         return "genreEdit";
-    }
-
-    @PostMapping("/genres/genreEdit")
-    public String genreSave(@Valid @ModelAttribute("genre") Genre genre, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            return "genreEdit";
-        }
-        genreService.save(genre);
-        return "redirect:/genres/";
     }
 
     @GetMapping("/genres/genreAdd")

@@ -38,17 +38,17 @@ class AuthorRestControllerTest {
                 new Author(2, "Author_2"));
         when(authorService.findAll()).thenReturn(authors);
 
-        mvc.perform(get("/authors/list"))
+        mvc.perform(get("/api/authors"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(authors)));
     }
 
     @Test
-    void testAuthorAdd() throws Exception {
+    void testAuthorSave() throws Exception {
         Author author = new Author(3, "Author_3");
         when(authorService.save(author)).thenReturn(author);
 
-        mvc.perform(post("/authors")
+        mvc.perform(post("/api/authors")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(AuthorDto.toDto(author))))
                 .andExpect(content().json(mapper.writeValueAsString(author)));

@@ -46,7 +46,7 @@
 
 <script>
     $(function () {
-        $.get('/genres/list').done(function (genres) {
+        $.get('/api/genres').done(function (genres) {
             genres.forEach(function (genre) {
                 $('tbody').append(`
                     <tr>

@@ -27,7 +27,7 @@
             const idInput = document.getElementById("id-input")
             const nameInput = document.getElementById("genre-name-input")
             const genre = { id: idInput.value, name: nameInput.value}
-            fetch("/genres", {
+            fetch("/api/genres", {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -42,6 +42,7 @@
 <body>
 
 <a href="/">Home</a><br/><br/>
+<a href="/genres/">Genres</a><br/><br/>
 
 <h3>Genre</h3>
 

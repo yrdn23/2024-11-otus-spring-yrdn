@@ -11,10 +11,10 @@ import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.rest.dto.BookDto;
+import ru.otus.hw.rest.mappers.BookMapper;
 import ru.otus.hw.services.BookService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,8 +22,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(BookRestController.class)
+@WebMvcTest(controllers = {BookRestController.class, BookMapper.class})
 class BookRestControllerTest {
+
+    @Autowired
+    private BookMapper bookMapper;
 
     @Autowired
     private MockMvc mvc;
@@ -41,22 +44,30 @@ class BookRestControllerTest {
                 new Book(2, "BookTitle_2", new Author(2, "Author_2"), new Genre(2, "Genre_2"), null));
         when(bookService.findAll()).thenReturn(books);
 
-        List<BookDto> booksDto = books.stream().map(BookDto::toDto).toList();
+        List<BookDto> booksDto = books.stream().map(bookMapper::map).toList();
 
-        mvc.perform(get("/books/list"))
+        mvc.perform(get("/api/books"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(booksDto)));
     }
 
     @Test
-    void testBookAdd() throws Exception {
+    void testBookSave() throws Exception {
         Book book = new Book(3, "BookTitle_3", new Author(3, "Author_3"), new Genre(3, "Genre_3"), null);
 
-        when(bookService.save(BookDto.toDto(book))).thenReturn(book);
+        when(bookService.save(bookMapper.map(book))).thenReturn(book);
 
-        mvc.perform(post("/books")
+        mvc.perform(post("/api/books")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(BookDto.toDto(book))))
-                .andExpect(content().json(mapper.writeValueAsString(BookDto.toDto(book))));
+                        .content(mapper.writeValueAsString(bookMapper.map(book))))
+                .andExpect(content().json(mapper.writeValueAsString(bookMapper.map(book))));
+    }
+
+    @Test
+    void testBookDelete() throws Exception {
+        var bookId = 7;
+        mvc.perform(post("/api/books/%s".formatted(bookId)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("OK"));
     }
 }

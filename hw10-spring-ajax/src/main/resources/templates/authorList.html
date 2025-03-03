@@ -46,7 +46,7 @@
 
 <script>
     $(function () {
-        $.get('/authors/list').done(function (authors) {
+        $.get('/api/authors').done(function (authors) {
             authors.forEach(function (author) {
                 $('tbody').append(`
                     <tr>

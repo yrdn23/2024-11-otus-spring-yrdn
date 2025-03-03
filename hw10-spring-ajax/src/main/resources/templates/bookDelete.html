@@ -25,7 +25,7 @@
         function bookDelete() {
             const resultContainer = document.getElementById("result")
             const idInput = document.getElementById("id-input")
-            fetch('/books/' + idInput.value, {
+            fetch('/api/books/' + idInput.value, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
