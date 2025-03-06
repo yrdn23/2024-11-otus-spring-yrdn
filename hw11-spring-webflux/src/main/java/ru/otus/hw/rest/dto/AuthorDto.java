@@ -9,7 +9,7 @@ import ru.otus.hw.models.Author;
 @AllArgsConstructor
 public class AuthorDto {
 
-    private long id;
+    private String id;
 
     @Length(min = 3)
     private String fullName;
@@ -19,6 +19,6 @@ public class AuthorDto {
     }
 
     public Author toDomainObject() {
-        return new Author(id, fullName);
+        return new Author("".equals(id) ? null : id, fullName);
     }
 }

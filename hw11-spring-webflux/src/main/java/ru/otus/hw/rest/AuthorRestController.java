@@ -2,32 +2,34 @@ package ru.otus.hw.rest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.rest.dto.AuthorDto;
-import ru.otus.hw.services.AuthorService;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class AuthorRestController {
 
-    private final AuthorService authorService;
+    private final AuthorRepository authorRepository;
 
     @GetMapping("/api/authors")
-    public List<AuthorDto> authorList() {
-        return authorService.findAll().stream()
-                .map(AuthorDto::toDto)
-                .toList();
+    public Flux<AuthorDto> authorList() {
+        return authorRepository.findAll().map(AuthorDto::toDto);
+    }
+
+    @GetMapping("/api/authors/{id}")
+    public Mono<AuthorDto> authorOne(@PathVariable String id) {
+        return authorRepository.findById(id).map(AuthorDto::toDto);
     }
 
     @PostMapping("/api/authors")
-    public ResponseEntity<AuthorDto> authorSave(@Valid @RequestBody AuthorDto authorDto) {
-        var savedAuthor = authorService.save(authorDto.toDomainObject());
-        return ResponseEntity.ok(AuthorDto.toDto(savedAuthor));
+    public Mono<AuthorDto> authorSave(@Valid @RequestBody AuthorDto authorDto) {
+        return authorRepository.save(authorDto.toDomainObject()).map(AuthorDto::toDto);
     }
 }

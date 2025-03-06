@@ -36,6 +36,7 @@
 <table class="authors">
     <thead>
     <tr>
+        <th>Id</th>
         <th>Name</th>
         <th>Action</th>
     </tr>
@@ -50,6 +51,7 @@
             authors.forEach(function (author) {
                 $('tbody').append(`
                     <tr>
+                        <td>${author.id}</td>
                         <td>${author.fullName}</td>
                         <td><a href="/authors/authorEdit?id=${author.id}">Edit</a></td>
                     </tr>

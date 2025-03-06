@@ -21,6 +21,7 @@
             margin-top: 10px;
         }
     </style>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
     <script>
         function authorSave() {
             const savedAuthorContainer = document.getElementById("saved-author")
@@ -46,12 +47,12 @@
 
 <h3>Author</h3>
 
-<form id="edit-form" action="authorEdit.html" th:method="post" th:action="@{/authors/authorEdit(id=${author.id})}" th:object="${author}">
-    <input hidden id="id-input" type="text" readonly="readonly" value="1" th:value="*{id}"/>
+<form id="edit-form" action="authorEdit.html" th:method="post" th:action="@{/authors/authorEdit(id=${id})}">
+    <input hidden id="id-input" type="text" readonly="readonly" value="1" th:value="${id}"/>
 
     <div class="row">
         <label for="author-name-input">Name:</label>
-        <input id="author-name-input" name="fullName" type="text" value="Name" th:value="*{getFullName()}"/>
+        <input id="author-name-input" name="fullName" type="text" value="Name"/>
     </div>
 
     <div class="row">
@@ -59,6 +60,14 @@
         <a href="authorList.html" th:href="@{/authors/}"><button type="button">Cancel</button></a>
     </div>
 </form>
+
+<script>
+    $(function () {
+        $.get('/api/authors/' + $('#id-input').val()).done(function (author) {
+            $('#author-name-input').val(author.fullName);
+        })
+    });
+</script>
 
 <h3>Saved Author:</h3>
 <pre id="saved-author"></pre>
