@@ -36,6 +36,7 @@
 <table class="genres">
     <thead>
     <tr>
+        <th>Id</th>
         <th>Name</th>
         <th>Action</th>
     </tr>
@@ -50,6 +51,7 @@
             genres.forEach(function (genre) {
                 $('tbody').append(`
                     <tr>
+                        <td>${genre.id}</td>
                         <td>${genre.name}</td>
                         <td><a href="/genres/genreEdit?id=${genre.id}">Edit</a></td>
                     </tr>
