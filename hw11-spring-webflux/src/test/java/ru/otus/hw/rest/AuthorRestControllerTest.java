@@ -1,56 +1,98 @@
 package ru.otus.hw.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 import ru.otus.hw.models.Author;
+import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.rest.dto.AuthorDto;
-import ru.otus.hw.services.AuthorService;
 
-import java.util.List;
-
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AuthorRestController.class)
+@WebFluxTest(controllers = AuthorRestController.class)
+@TestPropertySource(properties = {"mongock.enabled=false"})
 class AuthorRestControllerTest {
 
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper mapper;
+    private WebTestClient client;
 
     @MockBean
-    private AuthorService authorService;
+    private AuthorRepository authorRepository;
 
     @Test
-    void testAuthorList() throws Exception {
-        List<Author> authors = List.of(
-                new Author(1, "Author_1"),
-                new Author(2, "Author_2"));
-        when(authorService.findAll()).thenReturn(authors);
+    void testAuthorList() {
+        var authors = new Author[]{
+                new Author("1", "Author_1"),
+                new Author("2", "Author_2")};
+        var authorsFlux = Flux.just(authors);
 
-        mvc.perform(get("/api/authors"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(authors)));
+        when(authorRepository.findAll()).thenReturn(authorsFlux);
+
+        var result = client
+                .get().uri("/api/authors")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(AuthorDto.class)
+                .getResponseBody();
+
+        var step = StepVerifier.create(result);
+        StepVerifier.Step<AuthorDto> stepResult = null;
+        for (Author author : authors) {
+            stepResult = step.expectNext(AuthorDto.toDto(author));
+            assertThat(stepResult).isNotNull();
+        }
+        stepResult.verifyComplete();
     }
 
     @Test
-    void testAuthorSave() throws Exception {
-        Author author = new Author(3, "Author_3");
-        when(authorService.save(author)).thenReturn(author);
+    void testAuthorOne() {
+        Author author = new Author("3", "Author_3");
 
-        mvc.perform(post("/api/authors")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(AuthorDto.toDto(author))))
-                .andExpect(content().json(mapper.writeValueAsString(author)));
+        when(authorRepository.findById(author.getId())).thenReturn(Mono.just(author));
+
+        var result = client
+                .get().uri("/api/authors/".concat(author.getId()))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(AuthorDto.class)
+                .getResponseBody();
+
+        var step = StepVerifier.create(result);
+        StepVerifier.Step<AuthorDto> stepResult = step.expectNext(AuthorDto.toDto(author));
+        assertThat(stepResult).isNotNull();
+        stepResult.verifyComplete();
+    }
+
+    @Test
+    void testAuthorSave() {
+        Author author = new Author("4", "Author_4");
+
+        when(authorRepository.save(any())).thenReturn(Mono.just(author));
+
+        var result = client
+                .post().uri("/api/authors")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(AuthorDto.toDto(author)), AuthorDto.class)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(AuthorDto.class)
+                .getResponseBody();
+
+        var step = StepVerifier.create(result);
+        StepVerifier.Step<AuthorDto> stepResult = step.expectNext(AuthorDto.toDto(author));
+        assertThat(stepResult).isNotNull();
+        stepResult.verifyComplete();
     }
 }
