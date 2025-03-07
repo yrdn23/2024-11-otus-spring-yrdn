@@ -47,7 +47,7 @@ class AuthorRestControllerTest {
 
         var step = StepVerifier.create(result);
         StepVerifier.Step<AuthorDto> stepResult = null;
-        for (Author author : authors) {
+        for (var author : authors) {
             stepResult = step.expectNext(AuthorDto.toDto(author));
             assertThat(stepResult).isNotNull();
         }
@@ -56,7 +56,7 @@ class AuthorRestControllerTest {
 
     @Test
     void testAuthorOne() {
-        Author author = new Author("3", "Author_3");
+        var author = new Author("3", "Author_3");
 
         when(authorRepository.findById(author.getId())).thenReturn(Mono.just(author));
 
@@ -76,7 +76,7 @@ class AuthorRestControllerTest {
 
     @Test
     void testAuthorSave() {
-        Author author = new Author("4", "Author_4");
+        var author = new Author("4", "Author_4");
 
         when(authorRepository.save(any())).thenReturn(Mono.just(author));
 

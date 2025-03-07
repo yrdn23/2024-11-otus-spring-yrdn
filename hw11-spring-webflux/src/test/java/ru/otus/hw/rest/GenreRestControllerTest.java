@@ -1,56 +1,98 @@
 package ru.otus.hw.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 import ru.otus.hw.models.Genre;
+import ru.otus.hw.repositories.GenreRepository;
 import ru.otus.hw.rest.dto.GenreDto;
-import ru.otus.hw.services.GenreService;
 
-import java.util.List;
-
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(GenreRestController.class)
+@WebFluxTest(controllers = GenreRestController.class)
+@TestPropertySource(properties = {"mongock.enabled=false"})
 class GenreRestControllerTest {
 
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper mapper;
+    private WebTestClient client;
 
     @MockBean
-    private GenreService genreService;
+    private GenreRepository genreRepository;
 
     @Test
-    void testGenreList() throws Exception {
-        List<Genre> genres = List.of(
-                new Genre(1, "Genre_1"),
-                new Genre(2, "Genre_2"));
-        when(genreService.findAll()).thenReturn(genres);
+    void testGenreList() {
+        var genres = new Genre[]{
+                new Genre("1", "Genre_1"),
+                new Genre("2", "Genre_2")};
+        var genresFlux = Flux.just(genres);
 
-        mvc.perform(get("/api/genres"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(genres)));
+        when(genreRepository.findAll()).thenReturn(genresFlux);
+
+        var result = client
+                .get().uri("/api/genres")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(GenreDto.class)
+                .getResponseBody();
+
+        var step = StepVerifier.create(result);
+        StepVerifier.Step<GenreDto> stepResult = null;
+        for (var genre : genres) {
+            stepResult = step.expectNext(GenreDto.toDto(genre));
+            assertThat(stepResult).isNotNull();
+        }
+        stepResult.verifyComplete();
     }
 
     @Test
-    void testAuthorSave() throws Exception {
-        Genre genre = new Genre(3, "Genre_3");
-        when(genreService.save(genre)).thenReturn(genre);
+    void testGenreOne() {
+        var genre = new Genre("3", "Genre_3");
 
-        mvc.perform(post("/api/genres")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(GenreDto.toDto(genre))))
-                .andExpect(content().json(mapper.writeValueAsString(genre)));
+        when(genreRepository.findById(genre.getId())).thenReturn(Mono.just(genre));
+
+        var result = client
+                .get().uri("/api/genres/".concat(genre.getId()))
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(GenreDto.class)
+                .getResponseBody();
+
+        var step = StepVerifier.create(result);
+        StepVerifier.Step<GenreDto> stepResult = step.expectNext(GenreDto.toDto(genre));
+        assertThat(stepResult).isNotNull();
+        stepResult.verifyComplete();
+    }
+
+    @Test
+    void testGenreSave() {
+        var genre = new Genre("4", "Genre_4");
+
+        when(genreRepository.save(any())).thenReturn(Mono.just(genre));
+
+        var result = client
+                .post().uri("/api/genres")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(GenreDto.toDto(genre)), GenreDto.class)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(GenreDto.class)
+                .getResponseBody();
+
+        var step = StepVerifier.create(result);
+        StepVerifier.Step<GenreDto> stepResult = step.expectNext(GenreDto.toDto(genre));
+        assertThat(stepResult).isNotNull();
+        stepResult.verifyComplete();
     }
 }
