@@ -36,6 +36,7 @@
 <table class="books">
     <thead>
     <tr>
+        <th>Id</th>
         <th>Title</th>
         <th>Author</th>
         <th>Genre</th>
@@ -53,9 +54,10 @@
             books.forEach(function (book) {
                 $('tbody').append(`
                     <tr>
+                        <td>${book.id}</td>
                         <td>${book.title}</td>
-                        <td>${book.author.fullName}</td>
-                        <td>${book.genre.name}</td>
+                        <td>${book.authorFullName}</td>
+                        <td>${book.genreName}</td>
                         <td>
                             <a href="/books/bookEdit?id=${book.id}">Edit</a>
                             <a href="/books/bookDelete?id=${book.id}">Delete</a>

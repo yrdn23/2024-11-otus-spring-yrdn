@@ -30,7 +30,7 @@
             const authorInput = document.getElementById("book-author-input")
             const genreInput = document.getElementById("book-genre-input")
             const book = { id: idInput.value, title: titleInput.value, authorId: authorInput.value, genreId: genreInput.value}
-            fetch("/api/books", {
+            fetch("/api/books/add", {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -51,10 +51,12 @@
 
 <form id="edit-form" action="bookEdit.html" th:method="post" th:action="@{/books/bookEdit(id=${id})}">
     <input hidden id="id-input" type="text" readonly="readonly" value="0" th:value="${id}"/>
+    <input hidden id="author-id-input" type="text" readonly="readonly" value="0" th:value="${authorId}"/>
+    <input hidden id="genre-id-input" type="text" readonly="readonly" value="0" th:value="${genreId}"/>
 
     <div class="row">
         <label for="book-name-input">Title:</label>
-        <input id="book-name-input" name="title" type="text"/>
+        <input id="book-name-input" name="title" type="text" value="Title"/>
     </div>
 
     <div class="row">
@@ -93,13 +95,6 @@
                 }));
             });
         })
-    });
-    $(function () {
-        $.get('/api/books/' + $('#id-input').val()).done(function (book) {
-            $('#book-name-input').val(book.title);
-            $('#book-author-input').val(book.authorId);
-            $('#book-genre-input').val(book.genreId);
-        });
     });
 </script>
 

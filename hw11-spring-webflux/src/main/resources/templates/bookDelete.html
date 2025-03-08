@@ -21,6 +21,7 @@
             margin-top: 10px;
         }
     </style>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
     <script>
         function bookDelete() {
             const resultContainer = document.getElementById("result")
@@ -43,13 +44,13 @@
 
 Delete book?<br/>
 
-<form id="edit-form" action="bookDelete.html" th:method="post" th:action="@{/books/{id}(id=${book.id})}" th:object="${book}">
+<form id="edit-form" action="bookDelete.html" th:method="post">
 
-    <input hidden id="id-input" type="text" readonly="readonly" value="1" th:value="*{id}"/>
+    <input hidden id="id-input" type="text" readonly="readonly" value="1" th:value="${id}"/>
 
     <div class="row">
-        <label>Title:</label>
-        <label th:text="*{getTitle()}">Title</label>
+        <label for="book-name-input">Title:</label>
+        <input id="book-name-input" name="title" type="text"/>
     </div>
 
     <div class="row">
@@ -59,6 +60,14 @@ Delete book?<br/>
         </a>
     </div>
 </form>
+
+<script>
+    $(function () {
+        $.get('/api/books/' + $('#id-input').val()).done(function (book) {
+            $('#book-name-input').val(book.title);
+        });
+    });
+</script>
 
 <h3>Result:</h3>
 <pre id="result"></pre>

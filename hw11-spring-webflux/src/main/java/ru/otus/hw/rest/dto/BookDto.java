@@ -7,12 +7,15 @@ import lombok.Data;
 @AllArgsConstructor
 public class BookDto {
 
-    private long id;
+    private String id;
 
     private String title;
 
-    private AuthorDto author;
+    private String authorId;
 
-    private GenreDto genre;
+    private String authorFullName;
 
+    private String genreId;
+
+    private String genreName;
 }
