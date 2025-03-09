@@ -17,6 +17,7 @@ public class CommentDto {
     private String bookTitle;
 
     public static CommentDto toDto(Comment comment) {
-        return new CommentDto(comment.getId(), comment.getText(), comment.getBook().getId(), comment.getBook().getTitle());
+        return new CommentDto(comment.getId(), comment.getText(),
+                comment.getBook().getId(), comment.getBook().getTitle());
     }
 }
