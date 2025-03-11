@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all Book Comments</title>
+    <style>
+        body {
+            padding: 10px;
+        }
+
+        .comments {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .comments tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .comments td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+
+<a href="/">Home</a><br/><br/>
+<a href="/books/">Books</a><br/><br/>
+
+<h3>Comments</h3>
+
+<input hidden id="id-input" type="text" readonly="readonly" value="0" th:value="${bookId}"/>
+
+<table class="comments">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Text</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script>
+    $(function () {
+        $.get('/api/comments/' + $('#id-input').val()).done(function (genres) {
+            genres.forEach(function (comment) {
+                $('tbody').append(`
+                    <tr>
+                        <td>${comment.id}</td>
+                        <td>${comment.text}</td>
+                    </tr>
+                `)
+            });
+        })
+    });
+</script>
+
+</body>
+</html>

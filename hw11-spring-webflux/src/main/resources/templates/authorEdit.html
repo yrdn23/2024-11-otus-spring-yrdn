@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit Author</title>
+    <style>
+        body {
+            padding: 10px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+    <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        function authorSave() {
+            const savedAuthorContainer = document.getElementById("saved-author")
+            const idInput = document.getElementById("id-input")
+            const fullNameInput = document.getElementById("author-name-input")
+            const author = { id: idInput.value, fullName: fullNameInput.value}
+            fetch("/api/authors", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(author)})
+                .then(rawResponse => rawResponse.json())
+                .then(json => savedAuthorContainer.innerHTML = JSON.stringify(json, null, 4))
+        }
+    </script>
+</head>
+<body>
+
+<a href="/">Home</a><br/><br/>
+<a href="/authors/">Authors</a><br/><br/>
+
+<h3>Author</h3>
+
+<form id="edit-form" action="authorEdit.html" th:method="post" th:action="@{/authors/authorEdit(id=${id})}">
+    <input hidden id="id-input" type="text" readonly="readonly" value="1" th:value="${id}"/>
+
+    <div class="row">
+        <label for="author-name-input">Name:</label>
+        <input id="author-name-input" name="fullName" type="text" value="Name"/>
+    </div>
+
+    <div class="row">
+        <button type="button" onclick="authorSave()">Save</button>
+        <a href="authorList.html" th:href="@{/authors/}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        $.get('/api/authors/' + $('#id-input').val()).done(function (author) {
+            $('#author-name-input').val(author.fullName);
+        })
+    });
+</script>
+
+<h3>Saved Author:</h3>
+<pre id="saved-author"></pre>
+
+</body>
+</html>
