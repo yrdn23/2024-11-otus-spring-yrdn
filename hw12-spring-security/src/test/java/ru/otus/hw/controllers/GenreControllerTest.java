@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.services.GenreService;
@@ -33,6 +34,7 @@ class GenreControllerTest {
     private GenreService genreService;
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testGenreListPageSuccessful() throws Exception {
         var genres = List.of(
                 new Genre(1, "Genre_1"),
@@ -48,6 +50,7 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testGenreEditPageSuccessful() throws Exception {
         var genreId = 3;
         var genre = new Genre(genreId, "Genre_3");
@@ -61,6 +64,7 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testGenreEditPageFail() throws Exception {
         var genreId = 4;
         when(genreService.findById(genreId)).thenReturn(Optional.empty());
@@ -72,6 +76,7 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testGenreSaveSuccessful() throws Exception {
         var genreId = 5;
         var genre = new Genre(genreId, "Genre_5");
@@ -84,6 +89,7 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testGenreAddPageSuccessful() throws Exception {
         var genreId = 6;
         var genre = new Genre(genreId, "Genre_6");
@@ -93,5 +99,25 @@ class GenreControllerTest {
                         .param("id", String.valueOf(genreId))
                         .flashAttr("genre", genre))
                 .andExpect(view().name("genreEdit"));
+    }
+
+    @Test
+    void testGenreListPageUnauthorized() throws Exception {
+        var genres = List.of(
+                new Genre(7, "Genre_7"),
+                new Genre(8, "Genre_8"));
+        when(genreService.findAll()).thenReturn(genres);
+
+        mvc.perform(get("/genres/"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testGenreEditPageUnauthorized() throws Exception {
+        var genre = new Genre(9, "Genre_9");
+        when(genreService.findById(9)).thenReturn(Optional.of(genre));
+
+        mvc.perform(get("/genres/9"))
+                .andExpect(status().isUnauthorized());
     }
 }

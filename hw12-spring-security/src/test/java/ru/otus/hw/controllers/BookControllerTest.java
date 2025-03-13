@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
@@ -43,6 +44,7 @@ class BookControllerTest {
     private GenreService genreService;
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testBookListPageSuccessful() throws Exception {
         var books = List.of(
                 new Book(1, "TestBook_1", new Author(), new Genre(), null),
@@ -58,6 +60,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testBookEditPageSuccessful() throws Exception {
         var bookId = 3;
         var book = new Book(bookId, "TestBook_3", new Author(), new Genre(), null);
@@ -73,6 +76,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testBookEditPageFail() throws Exception {
         var bookId = 4;
         when(bookService.findById(bookId)).thenReturn(Optional.empty());
@@ -84,6 +88,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testBookSaveSuccessful() throws Exception {
         var bookId = 5;
         var author = new Author(bookId, "TestAuthor_5");
@@ -100,6 +105,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testBookAddPageSuccessful() throws Exception {
         var bookId = 6;
         var book = new Book(bookId, "TestBook_6", new Author(), new Genre(), null);
@@ -112,9 +118,34 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testBookDeleteSuccessful() throws Exception {
         var bookId = 7;
         mvc.perform(post("/books/%s".formatted(bookId)))
                 .andExpect(redirectedUrl("/books/"));
+    }
+
+    @Test
+    void testBookListPageUnauthorized() throws Exception {
+        var author = new Author(9, "Author_9");
+        var genre = new Genre(9, "Genre_9");
+        var books = List.of(
+                new Book(8, "Book_8", author, genre, null),
+                new Book(9, "Book_9", author, genre, null));
+        when(bookService.findAll()).thenReturn(books);
+
+        mvc.perform(get("/books/"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testBookEditPageUnauthorized() throws Exception {
+        var author = new Author(9, "Author_9");
+        var genre = new Genre(9, "Genre_9");
+        var book = new Book(8, "Book_8", author, genre, null);
+        when(bookService.findById(8)).thenReturn(Optional.of(book));
+
+        mvc.perform(get("/books/9"))
+                .andExpect(status().isUnauthorized());
     }
 }

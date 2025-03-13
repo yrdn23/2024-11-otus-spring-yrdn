@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
@@ -40,6 +41,7 @@ class CommentControllerTest {
     private CommentService commentService;
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testCommentListPageSuccessful() throws Exception {
         var book = new Book(1, "BookTitle_1", new Author(), new Genre(), null);
         var comments = List.of(
@@ -58,6 +60,7 @@ class CommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testCommentEditPageSuccessful() throws Exception {
         var id = 3;
         var book = new Book(id, "Title_1", null, null, null);
@@ -72,6 +75,7 @@ class CommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testCommentEditPageFail() throws Exception {
         var id = 4;
         when(commentService.findById(id)).thenReturn(Optional.empty());
@@ -83,6 +87,7 @@ class CommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testCommentSaveSuccessful() throws Exception {
         var id = 5;
         var author = new Author(id, "TestAuthor_5");
@@ -99,6 +104,7 @@ class CommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testCommentAddPageSuccessful() throws Exception {
         var id = 1;
         var book = new Book(id, "Book_1", null, null, null);
@@ -112,10 +118,38 @@ class CommentControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testCommentDeleteSuccessful() throws Exception {
         var id = 1;
         mvc.perform(post("/comments/commentDelete?book_id=%s".formatted(id))
                         .param("id", String.valueOf(id)))
                 .andExpect(redirectedUrl("/comments/?id=%s".formatted(id)));
     }
+
+    @Test
+    void testCommentListPageUnauthorized() throws Exception {
+        var author = new Author(9, "Author_9");
+        var genre = new Genre(9, "Genre_9");
+        var book = new Book(9, "Book_9", author, genre, null);
+        var comments = List.of(
+                new Comment(8, "Comment_8", book),
+                new Comment(9, "Comment_9", book));
+        when(commentService.findByBookId(9)).thenReturn(comments);
+
+        mvc.perform(get("/comments/id=9"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testCommentEditPageUnauthorized() throws Exception {
+        var author = new Author(9, "Author_9");
+        var genre = new Genre(9, "Genre_9");
+        var book = new Book(9, "Book_9", author, genre, null);
+        var comment = new Comment(9, "Comment_9", book);
+        when(commentService.findById(9)).thenReturn(Optional.of(comment));
+
+        mvc.perform(get("/comment/9"))
+                .andExpect(status().isUnauthorized());
+    }
+
 }

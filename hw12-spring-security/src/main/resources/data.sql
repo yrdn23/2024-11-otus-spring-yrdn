@@ -9,3 +9,7 @@ values ('BookTitle_1', 1, 1), ('BookTitle_2', 2, 2), ('BookTitle_3', 3, 3);
 
 insert into comments(text, book_id)
 values ('Comment_1', 1), ('Comment_2', 2), ('Comment_3', 2), ('Comment_4', 3);
+
+insert into users(name, password)
+values ('user','$2y$10$A1GBGnymxG8ex8lNJ0UhVOkH5PaeowC3FF1STsrkyvgo2mDRafyXm'),
+       ('admin','$2y$10$Rdsf/qZNsbwRIu8DaMRv8uHJiIBLvJah/4xN2Y/1pLfTlIDgMhlau');

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.services.AuthorService;
@@ -33,6 +34,7 @@ class AuthorControllerTest {
     private AuthorService authorService;
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testAuthorListPageSuccessful() throws Exception {
         var authors = List.of(
                 new Author(1, "Author_1"),
@@ -48,6 +50,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testAuthorEditPageSuccessful() throws Exception {
         var authorId = 3;
         var author = new Author(authorId, "Author_3");
@@ -61,6 +64,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testAuthorEditPageFail() throws Exception {
         var authorId = 4;
         when(authorService.findById(authorId)).thenReturn(Optional.empty());
@@ -72,6 +76,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testAuthorSaveSuccessful() throws Exception {
         var authorId = 5;
         var author = new Author(authorId, "Author_5");
@@ -84,6 +89,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testAuthorAddPageSuccessful() throws Exception {
         var authorId = 6;
         var author = new Author(authorId, "Author_6");
@@ -93,5 +99,25 @@ class AuthorControllerTest {
                         .param("id", String.valueOf(authorId))
                         .flashAttr("author", author))
                 .andExpect(view().name("authorEdit"));
+    }
+
+    @Test
+    void testAuthorListPageUnauthorized() throws Exception {
+        var authors = List.of(
+                new Author(7, "Author_7"),
+                new Author(8, "Author_8"));
+        when(authorService.findAll()).thenReturn(authors);
+
+        mvc.perform(get("/authors/"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testAuthorEditPageUnauthorized() throws Exception {
+        var author = new Author(9, "Author_9");
+        when(authorService.findById(9)).thenReturn(Optional.of(author));
+
+        mvc.perform(get("/authors/9"))
+                .andExpect(status().isUnauthorized());
     }
 }
