@@ -24,7 +24,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/public").permitAll()
-                        .requestMatchers("/authors/*", "/comments/*", "/books/*", "/genres/*").authenticated()
+                        .requestMatchers("/authors/**", "/genres/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/comments/**", "/books/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().permitAll()
                 )
                 .formLogin(Customizer.withDefaults())
