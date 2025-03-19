@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -99,6 +100,7 @@ class BookControllerTest {
         when(bookService.save(book)).thenReturn(book);
 
         mvc.perform(post("/books/bookEdit")
+                        .with(csrf())
                         .param("id", String.valueOf(bookId))
                         .flashAttr("book", book))
                 .andExpect(redirectedUrl("/books/"));
@@ -121,7 +123,8 @@ class BookControllerTest {
     @WithMockUser(username = "user", authorities = {"ROLE_USER"})
     void testBookDeleteSuccessful() throws Exception {
         var bookId = 7;
-        mvc.perform(post("/books/%s".formatted(bookId)))
+        mvc.perform(post("/books/%s".formatted(bookId))
+                        .with(csrf()))
                 .andExpect(redirectedUrl("/books/"));
     }
 

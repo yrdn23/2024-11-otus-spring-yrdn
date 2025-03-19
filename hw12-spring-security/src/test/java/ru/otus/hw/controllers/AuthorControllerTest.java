@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -83,6 +84,7 @@ class AuthorControllerTest {
         when(authorService.save(author)).thenReturn(author);
 
         mvc.perform(post("/authors/authorEdit")
+                        .with(csrf())
                         .param("id", String.valueOf(authorId))
                         .flashAttr("author", author))
                 .andExpect(redirectedUrl("/authors/"));

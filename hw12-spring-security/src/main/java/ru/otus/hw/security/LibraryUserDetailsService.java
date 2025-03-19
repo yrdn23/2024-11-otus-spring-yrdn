@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.otus.hw.models.User;
 import ru.otus.hw.repositories.UserRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LibraryUserDetailsService implements UserDetailsService {
@@ -18,6 +20,14 @@ public class LibraryUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String name) {
         User user = userRepository.findByName(name)
                 .orElseThrow(() -> new UsernameNotFoundException(name));
-        return new LibraryUserPrincipal(user);
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getName())
+                .password(user.getPassword())
+                .authorities(List.of())
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
+                .build();
     }
 }

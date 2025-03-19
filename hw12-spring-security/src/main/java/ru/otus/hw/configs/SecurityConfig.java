@@ -25,7 +25,6 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/public").permitAll()
                         .requestMatchers("/authors/*", "/comments/*", "/books/*", "/genres/*").authenticated()
-                        .anyRequest().permitAll()
                 )
                 .formLogin(Customizer.withDefaults())
                 .rememberMe(configurer -> configurer.key("hw")
