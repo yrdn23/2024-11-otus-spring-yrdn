@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -98,6 +99,7 @@ class CommentControllerTest {
         when(commentService.save(comment)).thenReturn(comment);
 
         mvc.perform(post("/comments/commentEdit?book_id=%s".formatted(id))
+                        .with(csrf())
                         .param("id", String.valueOf(id))
                         .flashAttr("book", book))
                 .andExpect(redirectedUrl("/comments/?id=%s".formatted(id)));
@@ -108,7 +110,6 @@ class CommentControllerTest {
     void testCommentAddPageSuccessful() throws Exception {
         var id = 1;
         var book = new Book(id, "Book_1", null, null, null);
-        var comment = new Comment(id, "Comment_6", book);
         when(bookService.findById(id)).thenReturn(Optional.of(book));
 
         mvc.perform(get("/comments/commentAdd?book_id=%s".formatted(id))
@@ -122,6 +123,7 @@ class CommentControllerTest {
     void testCommentDeleteSuccessful() throws Exception {
         var id = 1;
         mvc.perform(post("/comments/commentDelete?book_id=%s".formatted(id))
+                        .with(csrf())
                         .param("id", String.valueOf(id)))
                 .andExpect(redirectedUrl("/comments/?id=%s".formatted(id)));
     }

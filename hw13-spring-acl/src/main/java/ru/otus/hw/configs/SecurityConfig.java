@@ -26,7 +26,6 @@ public class SecurityConfig {
                         .requestMatchers("/public").permitAll()
                         .requestMatchers("/authors/**", "/genres/**").hasAnyRole("ADMIN")
                         .requestMatchers("/comments/**", "/books/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().permitAll()
                 )
                 .formLogin(Customizer.withDefaults())
                 .rememberMe(configurer -> configurer.key("hw")

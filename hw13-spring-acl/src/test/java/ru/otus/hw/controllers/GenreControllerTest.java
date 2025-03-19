@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -83,6 +84,7 @@ class GenreControllerTest {
         when(genreService.save(genre)).thenReturn(genre);
 
         mvc.perform(post("/genres/genreEdit")
+                        .with(csrf())
                         .param("id", String.valueOf(genreId))
                         .flashAttr("genre", genre))
                 .andExpect(redirectedUrl("/genres/"));
