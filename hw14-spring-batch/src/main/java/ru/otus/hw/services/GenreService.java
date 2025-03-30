@@ -1,6 +1,6 @@
 package ru.otus.hw.services;
 
-import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.db.Genre;
 
 import java.util.List;
 import java.util.Optional;

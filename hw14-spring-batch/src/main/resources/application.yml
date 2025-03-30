@@ -10,3 +10,23 @@ spring:
     generate-ddl: false
     hibernate:
       ddl-auto: none      
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: library
+
+  shell:
+    interactive:
+      enabled: true
+    script:
+      enabled: true
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+      

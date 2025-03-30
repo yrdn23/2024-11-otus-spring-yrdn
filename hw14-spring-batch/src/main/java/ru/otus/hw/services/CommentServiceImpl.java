@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.models.Comment;
-import ru.otus.hw.repositories.BookRepository;
-import ru.otus.hw.repositories.CommentRepository;
+import ru.otus.hw.models.db.Comment;
+import ru.otus.hw.repositories.db.BookRepository;
+import ru.otus.hw.repositories.db.CommentRepository;
 
 import java.util.List;
 import java.util.Optional;

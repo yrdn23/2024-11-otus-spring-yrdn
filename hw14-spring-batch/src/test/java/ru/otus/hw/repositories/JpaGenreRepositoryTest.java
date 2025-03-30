@@ -7,7 +7,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import ru.otus.hw.models.Genre;
+import ru.otus.hw.models.db.Genre;
+import ru.otus.hw.repositories.db.GenreRepository;
 
 import java.util.List;
 import java.util.stream.IntStream;

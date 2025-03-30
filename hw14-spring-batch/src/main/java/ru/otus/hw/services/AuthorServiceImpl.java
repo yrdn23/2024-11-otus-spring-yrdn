@@ -2,8 +2,8 @@ package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.otus.hw.models.Author;
-import ru.otus.hw.repositories.AuthorRepository;
+import ru.otus.hw.models.db.Author;
+import ru.otus.hw.repositories.db.AuthorRepository;
 
 import java.util.List;
 import java.util.Optional;
