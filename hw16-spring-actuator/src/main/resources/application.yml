@@ -9,4 +9,27 @@ spring:
   jpa:
     generate-ddl: false
     hibernate:
-      ddl-auto: none      
+      ddl-auto: none
+  jmx:
+    enabled: true
+  data:
+    rest:
+      base-path: /datarest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    logfile:
+      enabled: true
+  health:
+    defaults:
+      enabled: true
+
+logging:
+  file:
+    name: application.log
