@@ -8,8 +8,14 @@ public class Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
-		System.out.printf("Чтобы перейти на страницу сайта открывай: %s%n",
-				"http://localhost:8080");
+		System.out.println("http://localhost:8080");
+		System.out.println("http://localhost:8080/actuator");
+		System.out.println("http://localhost:8080/actuator/prometheus");
+		System.out.println("http://localhost:8080/actuator/health");
+		System.out.println("http://localhost:8080/actuator/health/diskSpace");
+		System.out.println("http://localhost:8080/actuator/logfile");
+		System.out.println("http://localhost:8080/browser/index.html");
+		System.out.println("http://localhost:8080/datarest");
 	}
 
 }

@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>ru.otus.hw</groupId>
-    <artifactId>hw10-spring-ajax</artifactId>
+    <artifactId>hw16-spring-actuator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -79,6 +79,26 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
+        </dependency>
+
+        <!-- Вот это и есть Spring Data REST -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-rest</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <!-- HAL Explorer - это Swagger для Spring Data REST -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-rest-hal-explorer</artifactId>
         </dependency>
     </dependencies>
 
