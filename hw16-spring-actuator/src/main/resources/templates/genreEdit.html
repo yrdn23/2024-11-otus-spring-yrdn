@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit Genre</title>
+    <style>
+        body {
+            padding: 10px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        function genreSave() {
+            const savedGenreContainer = document.getElementById("saved-genre")
+            const idInput = document.getElementById("id-input")
+            const nameInput = document.getElementById("genre-name-input")
+            const genre = { id: idInput.value, name: nameInput.value}
+            fetch("/api/genres", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(genre)})
+                .then(rawResponse => rawResponse.json())
+                .then(json => savedGenreContainer.innerHTML = JSON.stringify(json, null, 4))
+        }
+    </script>
+</head>
+<body>
+
+<a href="/">Home</a><br/><br/>
+<a href="/genres/">Genres</a><br/><br/>
+
+<h3>Genre</h3>
+
+<form id="edit-form" action="genreEdit.html" th:method="post" th:action="@{/genres/genreEdit(id=${genre.id})}" th:object="${genre}">
+    <input hidden id="id-input" type="text" readonly="readonly" value="1" th:value="*{id}"/>
+
+    <div class="row">
+        <label for="genre-name-input">Name:</label>
+        <input id="genre-name-input" name="name" type="text" value="Name" th:value="*{getName()}"/>
+    </div>
+
+    <div class="row">
+        <button type="button" onclick="genreSave()">Save</button>
+        <a href="genreList.html" th:href="@{/genres/}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+<h3>Saved Genre:</h3>
+<pre id="saved-genre"></pre>
+
+</body>
+</html>
