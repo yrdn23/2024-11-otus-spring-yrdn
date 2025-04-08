@@ -36,6 +36,12 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
+    public Long count() {
+        return bookRepository.count();
+    }
+
+    @Transactional
+    @Override
     public Book insert(String title, long authorId, long genreId) {
         return save(0, title, authorId, genreId);
     }
