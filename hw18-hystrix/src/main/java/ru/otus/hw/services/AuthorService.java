@@ -8,7 +8,11 @@ import java.util.Optional;
 public interface AuthorService {
     List<Author> findAll();
 
+    List<Author> fallbackFindAll();
+
     Optional<Author> findById(long id);
+
+    Optional<Author> fallbackFindById(long id);
 
     Author save(Author author);
 }
