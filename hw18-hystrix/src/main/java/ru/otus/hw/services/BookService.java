@@ -7,17 +7,24 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
+
     Optional<Book> findById(long id);
+
+    Optional<Book> fallbackFindById(long id);
 
     List<Book> findAll();
 
-    Book insert(String title, long authorId, long genreId);
-
-    Book update(long id, String title, long authorId, long genreId);
+    List<Book> fallbackFindAll();
 
     Book save(Book book);
 
+    Book fallbackSave(Book book);
+
     Book save(BookDto bookDto);
 
+    Book fallbackSave(BookDto bookDto);
+
     void deleteById(long id);
+
+    void fallbackDeleteById(long id);
 }

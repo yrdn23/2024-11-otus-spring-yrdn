@@ -15,4 +15,6 @@ public interface AuthorService {
     Optional<Author> fallbackFindById(long id);
 
     Author save(Author author);
+
+    Author fallbackSave(Author author);
 }

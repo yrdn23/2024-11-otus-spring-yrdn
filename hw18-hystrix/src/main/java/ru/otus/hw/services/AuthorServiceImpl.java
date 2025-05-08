@@ -37,7 +37,12 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "fallbackSave")
     public Author save(Author author) {
         return authorRepository.save(author);
+    }
+
+    public Author fallbackSave(Author author) {
+        return new Author(-1L, "ERROR_AUTHOR");
     }
 }
